@@ -43,12 +43,12 @@
 
           Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт.<br><br>
 
-          Вся информация перенесена на новый официальный сайт техникума.
+          Вся информация перенесена на официальный сайт техникума.
         </div>
 
         <div class="rm-buttons">
-          <button id="rmGo">Перейти на новый сайт</button>
-          <button id="rmClose">Понятно</button>
+          <button id="rmGo" class="btn primary">Перейти на новый сайт</button>
+          <button id="rmClose" class="btn secondary">Понятно</button>
         </div>
 
       </div>
@@ -56,18 +56,13 @@
 
     document.documentElement.appendChild(overlay);
 
-    requestAnimationFrame(() => {
-      overlay.classList.add("show");
-    });
+    requestAnimationFrame(() => overlay.classList.add("show"));
 
-    const go = overlay.querySelector("#rmGo");
-    const close = overlay.querySelector("#rmClose");
-
-    go.onclick = () => {
+    overlay.querySelector("#rmGo").onclick = () => {
       location.href = "https://brimtspo.gosuslugi.ru/";
     };
 
-    close.onclick = () => {
+    overlay.querySelector("#rmClose").onclick = () => {
       overlay.classList.add("hide");
       setTimeout(() => overlay.remove(), 280);
     };
@@ -87,28 +82,25 @@
           Публикация информации прекращена <b>31 марта 2026 года</b>
         </div>
 
-        <button id="fbBtn">Подробнее</button>
+        <button id="fbBtn" class="btn primary">Подробнее</button>
       </div>
     `;
 
     document.documentElement.appendChild(bar);
 
-    const btn = bar.querySelector("#fbBtn");
-    btn.onclick = createModal;
+    bar.querySelector("#fbBtn").onclick = createModal;
 
+    // 🔥 floating animation
     let t = 0;
 
-    function floatAnimation() {
+    function animate() {
       t += 0.02;
-
       const y = Math.sin(t) * 6;
-
       bar.style.transform = `translateX(-50%) translateY(${y}px)`;
-
-      requestAnimationFrame(floatAnimation);
+      requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(floatAnimation);
+    requestAnimationFrame(animate);
   }
 
   // =========================
@@ -119,6 +111,10 @@
     const style = document.createElement("style");
 
     style.innerHTML = `
+
+      body {
+        font-family: Arial, sans-serif;
+      }
 
       /* ===== MODAL ===== */
       #redirModal {
@@ -132,8 +128,7 @@
 
         opacity:0;
         backdrop-filter: blur(0px);
-        transition: opacity 0.28s ease, backdrop-filter 0.28s ease;
-        font-family:Segoe UI, Arial, sans-serif;
+        transition:0.28s ease;
       }
 
       #redirModal.show {
@@ -158,8 +153,7 @@
       .rm-logo {
         width:110px;
         height:110px;
-        display:block;
-        margin:0 auto 14px;
+        margin-bottom:14px;
       }
 
       h2 {
@@ -180,26 +174,51 @@
         gap:12px;
       }
 
-      #rmGo, #rmClose {
+      /* ===== UNIFIED BUTTON STYLE ===== */
+      .btn {
         border:none;
         padding:11px 16px;
         border-radius:12px;
         cursor:pointer;
         color:#fff;
         font-weight:600;
-        transition: all 0.2s ease;
+        transition: all 0.25s ease;
+        position:relative;
+        overflow:hidden;
       }
 
-      #rmGo {
+      .primary {
         background:linear-gradient(135deg,#34d399,#10b981);
       }
 
-      #rmClose {
+      .secondary {
         background:linear-gradient(135deg,#60a5fa,#3b82f6);
       }
 
-      #rmGo:hover, #rmClose:hover {
-        transform: translateY(-2px);
+      .btn:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow:0 10px 18px rgba(0,0,0,0.18);
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      /* shine effect */
+      .btn::after {
+        content:"";
+        position:absolute;
+        top:-60%;
+        left:-60%;
+        width:40%;
+        height:200%;
+        background:rgba(255,255,255,0.25);
+        transform:rotate(25deg);
+        transition: left 0.5s ease;
+      }
+
+      .btn:hover::after {
+        left:120%;
       }
 
       /* ===== BOTTOM BAR ===== */
@@ -214,57 +233,17 @@
         border:1px solid rgba(0,0,0,0.06);
         box-shadow:0 12px 30px rgba(0,0,0,0.12);
         z-index:999998;
-        font-family:Arial;
-
         will-change: transform;
       }
 
       .fb-wrap {
         display:flex;
         justify-content:space-between;
-        padding:14px 16px;
         align-items:center;
+        padding:14px 16px;
         gap:12px;
       }
 
-      /*BUTTON "Подробнее" */
-      #fbBtn {
-        border:none;
-        padding:10px 14px;
-        border-radius:12px;
-        cursor:pointer;
-        color:#fff;
-        background:linear-gradient(135deg,#34d399,#10b981);
-        transition: all 0.25s ease;
-        position:relative;
-        overflow:hidden;
-      }
-
-      #fbBtn:hover {
-        transform: translateY(-3px) scale(1.03);
-        box-shadow:0 10px 18px rgba(16,185,129,0.35);
-      }
-
-      #fbBtn:active {
-        transform: scale(0.97);
-      }
-
-      /* light shine */
-      #fbBtn::after {
-        content:"";
-        position:absolute;
-        top:-60%;
-        left:-60%;
-        width:40%;
-        height:200%;
-        background:rgba(255,255,255,0.25);
-        transform:rotate(25deg);
-        transition: left 0.5s ease;
-      }
-
-      #fbBtn:hover::after {
-        left:120%;
-      }
     `;
 
     document.head.appendChild(style);
