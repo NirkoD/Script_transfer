@@ -3,8 +3,9 @@
   const LOGO_URL = "https://github.com/NirkoD/Script_transfer/raw/refs/heads/main/logo.svg";
   const STORAGE_DATE = "modal_last_shown_date";
 
-  if (!document || !document.documentElement) return;
-
+  // =========================
+  // CHECK: 1 раз в день
+  // =========================
   function shouldShowModalOncePerDay() {
     try {
       const today = new Date().toISOString().split("T")[0];
@@ -14,13 +15,13 @@
 
       localStorage.setItem(STORAGE_DATE, today);
       return true;
-    } catch {
+    } catch (e) {
       return true;
     }
   }
 
   // =========================
-  // MODAL
+  // MODAL (ОКНО 1)
   // =========================
   function createModal() {
 
@@ -33,7 +34,7 @@
       <div class="rm-box">
 
         <div class="rm-logoWrap">
-          <img src="${LOGO_URL}" class="rm-logo" onerror="this.style.display='none'">
+          <img src="${LOGO_URL}" class="rm-logo">
         </div>
 
         <h2>Уведомление</h2>
@@ -41,7 +42,7 @@
         <div class="rm-content">
           Информация на сайте перестала обновляться <b>31 марта 2026 года</b>.<br><br>
 
-          Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт.<br><br>
+          Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт и недоступен.<br><br>
 
           Вся информация перенесена на официальный сайт техникума.
         </div>
@@ -56,7 +57,7 @@
 
     document.documentElement.appendChild(overlay);
 
-    // 🔥 мягкое появление (без scale-эффекта)
+    // появление
     requestAnimationFrame(() => {
       overlay.classList.add("show");
     });
@@ -69,18 +70,28 @@
     };
 
     close.onclick = () => {
-      overlay.classList.add("hide");
+
+      const box = overlay.querySelector(".rm-box");
+
+      // ЧИСТОЕ ЗАКРЫТИЕ (без "схлопывания")
+      box.style.transition = "opacity 0.18s ease, transform 0.18s ease";
+      box.style.opacity = "0";
+      box.style.transform = "translateY(10px)";
+
+      overlay.style.opacity = "0";
 
       setTimeout(() => {
         overlay.remove();
-      }, 280);
+      }, 180);
     };
   }
 
   // =========================
-  // BOTTOM BAR
+  // BOTTOM BAR (ОКНО 2)
   // =========================
   function createBottomBar() {
+
+    if (document.getElementById("floatingBar")) return;
 
     const bar = document.createElement("div");
     bar.id = "floatingBar";
@@ -97,11 +108,13 @@
 
     document.documentElement.appendChild(bar);
 
-    bar.querySelector("#fbBtn").onclick = createModal;
+    bar.querySelector("#fbBtn").onclick = () => {
+      createModal();
+    };
   }
 
   // =========================
-  // STYLES (SAFE FIXED)
+  // STYLES (SAFE, NO CONFLICT)
   // =========================
   function injectStyles() {
 
@@ -118,20 +131,14 @@
         align-items:center;
         justify-content:center;
         z-index:999999;
+        font-family:Segoe UI, Arial, sans-serif;
 
         opacity:0;
-        backdrop-filter: blur(0px);
-        transition: opacity 0.28s ease, backdrop-filter 0.28s ease;
-        font-family:Segoe UI, Arial, sans-serif;
+        transition:opacity 0.22s ease;
       }
 
       #redirModal.show {
         opacity:1;
-        backdrop-filter: blur(6px);
-      }
-
-      #redirModal.hide {
-        opacity:0;
       }
 
       .rm-box {
@@ -140,10 +147,9 @@
         border-radius:18px;
         max-width:560px;
         width:92%;
-        box-shadow:0 20px 50px rgba(0,0,0,0.25);
         text-align:center;
-
-        transform: translateY(0);
+        box-shadow:0 20px 50px rgba(0,0,0,0.25);
+        transition: transform 0.22s ease, opacity 0.22s ease;
       }
 
       .rm-logoWrap {
@@ -152,17 +158,23 @@
         margin-bottom:14px;
       }
 
-      /* 🔥 FIX LOGO */
       .rm-logo {
         width:110px;
         height:110px;
-        display:block;
-        background:transparent !important;
+        object-fit:contain;
+        background:transparent;
+        opacity:0;
+        transition:opacity 0.25s ease;
+      }
+
+      .rm-logo[src] {
+        opacity:1;
       }
 
       h2 {
         margin:0 0 10px;
         font-size:22px;
+        color:#111;
       }
 
       .rm-content {
@@ -185,19 +197,21 @@
         cursor:pointer;
         color:#fff;
         font-weight:600;
-        transition: all 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
       #rmGo {
         background:linear-gradient(135deg,#34d399,#10b981);
+        box-shadow:0 8px 18px rgba(16,185,129,0.25);
       }
 
       #rmClose {
         background:linear-gradient(135deg,#60a5fa,#3b82f6);
+        box-shadow:0 8px 18px rgba(59,130,246,0.25);
       }
 
       #rmGo:hover, #rmClose:hover {
-        transform: translateY(-2px);
+        transform:translateY(-2px) scale(1.03);
       }
 
       /* ===== BOTTOM BAR ===== */
@@ -212,7 +226,7 @@
         border:1px solid rgba(0,0,0,0.06);
         box-shadow:0 12px 30px rgba(0,0,0,0.12);
         z-index:999998;
-        font-family:Arial;
+        font-family:Arial,sans-serif;
       }
 
       .fb-wrap {
@@ -230,6 +244,7 @@
         color:#fff;
         background:linear-gradient(135deg,#34d399,#10b981);
       }
+
     `;
 
     document.head.appendChild(style);
@@ -239,6 +254,7 @@
   // INIT
   // =========================
   function init() {
+
     injectStyles();
     createBottomBar();
 
