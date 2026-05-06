@@ -58,7 +58,6 @@
     requestAnimationFrame(() => {
       overlay.classList.add("show");
       document.body.classList.add("blur-active");
-      document.body.style.setProperty("--site-blur", "4px");
     });
 
     overlay.querySelector("#rmGo").onclick = () => {
@@ -115,7 +114,7 @@
 
       /* ================= BLUR SAFE ================= */
       body.blur-active > *:not(#redirModal):not(#redirModal *) {
-        filter: blur(2px);
+        filter: blur(4px);
         transition: filter 0.25s ease;
       }
 
