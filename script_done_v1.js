@@ -43,7 +43,7 @@
 
           Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт.<br><br>
 
-          Вся информация перенесена на официальный сайт техникума.
+          Вся информация перенесена на новый официальный сайт техникума.
         </div>
 
         <div class="rm-buttons">
@@ -90,7 +90,7 @@
 
     bar.querySelector("#fbBtn").onclick = createModal;
 
-    // 🔥 floating animation
+    //floating animation
     let t = 0;
 
     function animate() {
