@@ -58,6 +58,7 @@
     requestAnimationFrame(() => {
       overlay.classList.add("show");
       document.body.classList.add("blur-active");
+      document.body.style.setProperty("--site-blur", "4px");
     });
 
     overlay.querySelector("#rmGo").onclick = () => {
