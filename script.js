@@ -3,6 +3,9 @@
   const target = "https://brimtspo.gosuslugi.ru/";
   const STORAGE_KEY = "redirect_modal_visits";
 
+  // =========================
+  // VISITS LOGIC (1 раз в 3)
+  // =========================
   function getVisits() {
     return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
   }
@@ -11,15 +14,21 @@
     localStorage.setItem(STORAGE_KEY, v.toString());
   }
 
-  function shouldShow() {
+  function shouldShowModal() {
     let v = getVisits() + 1;
     setVisits(v);
-
-    // показываем только каждый 3-й визит
     return v % 3 === 0;
   }
 
+  // =========================
+  // MODAL (ОКНО 1)
+  // =========================
   function createModal() {
+
+    // скрываем нижнее окно (п.2)
+    const bottom = document.getElementById("floatingBar");
+    if (bottom) bottom.style.display = "none";
+
     const overlay = document.createElement("div");
     overlay.id = "redirModal";
 
@@ -28,7 +37,7 @@
         <h2>Сайт больше не работает</h2>
 
         <p>
-          Публикация новой информации прекратилась
+          Публикация новой информации прекращена
           <b>31 марта 2026 года</b>.
         </p>
 
@@ -40,7 +49,8 @@
     `;
 
     overlay.style = `
-      position:fixed;inset:0;
+      position:fixed;
+      inset:0;
       background:rgba(0,0,0,0.6);
       display:flex;
       align-items:center;
@@ -66,52 +76,108 @@
 
     document.getElementById("closeBtn").onclick = () => {
       overlay.remove();
+
+      // возвращаем нижнее окно
+      const bottom = document.getElementById("floatingBar");
+      if (bottom) bottom.style.display = "block";
     };
   }
 
+  // =========================
+  // BOTTOM FLOATING BAR (ОКНО 2)
+  // =========================
   function createBottomBar() {
+
     const bar = document.createElement("div");
+    bar.id = "floatingBar";
 
     bar.innerHTML = `
-      <span>
-        Публикация информации прекращена <b>31 марта 2026 года</b>
-      </span>
-      <button id="reopenBtn">Подробнее</button>
-    `;
+      <div class="wrap">
+        <div class="text">
+          Публикация информации прекращена <b>31 марта 2026 года</b>
+        </div>
 
-    bar.style = `
-      position:fixed;
-      bottom:0;
-      left:0;
-      width:100%;
-      background:#1f2937;
-      color:#fff;
-      padding:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-family:Arial,sans-serif;
-      z-index:999998;
-    `;
-
-    bar.querySelector("button").style = `
-      background:#4CAF50;
-      border:none;
-      padding:8px 12px;
-      border-radius:8px;
-      color:#fff;
-      cursor:pointer;
+        <button id="reopenBtn">Подробнее</button>
+      </div>
     `;
 
     document.documentElement.appendChild(bar);
 
-    bar.querySelector("#reopenBtn").onclick = () => {
+    bar.style = `
+      position:fixed;
+      bottom:20px;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(720px, calc(100% - 20px));
+      background:#ffffff;
+      border-radius:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.15);
+      z-index:999998;
+      font-family:Arial,sans-serif;
+
+      animation: floatUpDown 4s ease-in-out infinite;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    `;
+
+    bar.querySelector(".wrap").style = `
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 16px;
+      gap:12px;
+    `;
+
+    bar.querySelector(".text").style = `
+      font-size:14px;
+      color:#222;
+    `;
+
+    const btn = bar.querySelector("#reopenBtn");
+
+    btn.style = `
+      border:none;
+      padding:10px 14px;
+      border-radius:12px;
+      cursor:pointer;
+      color:#fff;
+      font-weight:500;
+      background: linear-gradient(135deg, #34d399, #10b981);
+      box-shadow:0 6px 14px rgba(16,185,129,0.3);
+      transition: all 0.2s ease;
+    `;
+
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+
+    btn.onclick = () => {
       if (!document.getElementById("redirModal")) {
         createModal();
       }
     };
+
+    // =========================
+    // ПЛАВАНИЕ ПРИ СКРОЛЛЕ (п.1)
+    // =========================
+    window.addEventListener("scroll", () => {
+      const offset = window.scrollY * 0.02;
+      bar.style.transform = `translateX(-50%) translateY(${offset}px)`;
+    });
+
+    // CSS анимация
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes floatUpDown {
+        0% { transform: translateX(-50%) translateY(0px); }
+        50% { transform: translateX(-50%) translateY(-6px); }
+        100% { transform: translateX(-50%) translateY(0px); }
+      }
+    `;
+    document.head.appendChild(style);
   }
 
+  // =========================
+  // INIT
+  // =========================
   function init() {
 
     const path = location.pathname.replace(/\/$/, "");
@@ -125,11 +191,9 @@
 
     if (!allowed.includes(path)) return;
 
-    // нижняя плашка всегда
     createBottomBar();
 
-    // модалка только раз в 3 визита
-    if (shouldShow()) {
+    if (shouldShowModal()) {
       createModal();
     }
   }
