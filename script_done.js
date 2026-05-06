@@ -43,7 +43,7 @@
 
           Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт.<br><br>
 
-          Вся информация перенесена на официальный сайт техникума.
+          Вся информация перенесена на новый официальный сайт техникума.
         </div>
 
         <div class="rm-buttons">
@@ -96,15 +96,12 @@
     const btn = bar.querySelector("#fbBtn");
     btn.onclick = createModal;
 
-    // =========================
-    // 🔥 FLOAT ANIMATION (парение)
-    // =========================
     let t = 0;
 
     function floatAnimation() {
       t += 0.02;
 
-      const y = Math.sin(t) * 6; // амплитуда "плавания"
+      const y = Math.sin(t) * 6;
 
       bar.style.transform = `translateX(-50%) translateY(${y}px)`;
 
@@ -230,7 +227,7 @@
         gap:12px;
       }
 
-      /* 🔥 BUTTON "Подробнее" */
+      /*BUTTON "Подробнее" */
       #fbBtn {
         border:none;
         padding:10px 14px;
