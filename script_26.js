@@ -76,6 +76,7 @@ document.body.classList.add("blur-active");
       overlay.style.opacity = "0";
 
       document.body.classList.remove("blur-active");
+      document.body.style.paddingRight = "";
 
       setTimeout(() => overlay.remove(), 200);
     };
