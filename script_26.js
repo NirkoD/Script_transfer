@@ -57,7 +57,10 @@
     // 🔥 включаем blur безопасно (через класс)
     requestAnimationFrame(() => {
       overlay.classList.add("show");
-      document.body.classList.add("blur-active");
+      const scrollBarCompensation = window.innerWidth - document.documentElement.clientWidth;
+
+document.body.style.paddingRight = scrollBarCompensation + "px";
+document.body.classList.add("blur-active");
     });
 
     overlay.querySelector("#rmGo").onclick = () => {
