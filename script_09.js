@@ -3,9 +3,6 @@
   const LOGO_URL = "https://github.com/NirkoD/Script_transfer/raw/refs/heads/main/logo.svg";
   const STORAGE_DATE = "modal_last_shown_date";
 
-  // =========================
-  // SAFE CHECK
-  // =========================
   if (!document || !document.documentElement) return;
 
   function shouldShowModalOncePerDay() {
@@ -17,7 +14,7 @@
 
       localStorage.setItem(STORAGE_DATE, today);
       return true;
-    } catch (e) {
+    } catch {
       return true;
     }
   }
@@ -36,10 +33,10 @@
       <div class="rm-box">
 
         <div class="rm-logoWrap">
-          <img src="${LOGO_URL}" class="rm-logo">
+          <img src="${LOGO_URL}" class="rm-logo" onerror="this.style.display='none'">
         </div>
 
-        <h2 class="rm-title">Уведомление</h2>
+        <h2>Уведомление</h2>
 
         <div class="rm-content">
           Информация на сайте перестала обновляться <b>31 марта 2026 года</b>.<br><br>
@@ -59,10 +56,9 @@
 
     document.documentElement.appendChild(overlay);
 
-    // OPEN ANIMATION
+    // 🔥 мягкое появление (без scale-эффекта)
     requestAnimationFrame(() => {
-      overlay.style.opacity = "1";
-      overlay.style.transform = "scale(1)";
+      overlay.classList.add("show");
     });
 
     const go = overlay.querySelector("#rmGo");
@@ -73,9 +69,11 @@
     };
 
     close.onclick = () => {
-      overlay.style.opacity = "0";
-      overlay.style.transform = "scale(0.95)";
-      setTimeout(() => overlay.remove(), 200);
+      overlay.classList.add("hide");
+
+      setTimeout(() => {
+        overlay.remove();
+      }, 280);
     };
   }
 
@@ -99,70 +97,79 @@
 
     document.documentElement.appendChild(bar);
 
-    const btn = bar.querySelector("#fbBtn");
-
-    btn.onclick = () => {
-      createModal();
-    };
+    bar.querySelector("#fbBtn").onclick = createModal;
   }
 
   // =========================
-  // SAFE STYLES (NO GLOBAL IMPACT)
+  // STYLES (SAFE FIXED)
   // =========================
   function injectStyles() {
 
     const style = document.createElement("style");
 
     style.innerHTML = `
+
+      /* ===== MODAL ===== */
       #redirModal {
         position:fixed;
         inset:0;
-        background:rgba(0,0,0,0.6);
+        background:rgba(0,0,0,0.55);
         display:flex;
         align-items:center;
         justify-content:center;
         z-index:999999;
 
         opacity:0;
-        transform:scale(1.05);
-        transition: all 0.25s ease;
+        backdrop-filter: blur(0px);
+        transition: opacity 0.28s ease, backdrop-filter 0.28s ease;
         font-family:Segoe UI, Arial, sans-serif;
+      }
+
+      #redirModal.show {
+        opacity:1;
+        backdrop-filter: blur(6px);
+      }
+
+      #redirModal.hide {
+        opacity:0;
       }
 
       .rm-box {
         background:#fff;
-        padding:30px;
+        padding:32px;
         border-radius:18px;
-        width:92%;
         max-width:560px;
-        text-align:center;
+        width:92%;
         box-shadow:0 20px 50px rgba(0,0,0,0.25);
+        text-align:center;
+
+        transform: translateY(0);
       }
 
       .rm-logoWrap {
         display:flex;
         justify-content:center;
-        margin-bottom:12px;
+        margin-bottom:14px;
       }
 
+      /* 🔥 FIX LOGO */
       .rm-logo {
         width:110px;
         height:110px;
-        object-fit:contain;
-        background:transparent;
+        display:block;
+        background:transparent !important;
       }
 
-      .rm-title {
+      h2 {
         margin:0 0 10px;
         font-size:22px;
-        font-weight:700;
       }
 
       .rm-content {
         font-size:14px;
         line-height:1.6;
-        color:#333;
         margin-bottom:20px;
+        color:#333;
       }
 
       .rm-buttons {
@@ -189,6 +196,11 @@
         background:linear-gradient(135deg,#60a5fa,#3b82f6);
       }
 
+      #rmGo:hover, #rmClose:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ===== BOTTOM BAR ===== */
       #floatingBar {
         position:fixed;
         bottom:20px;
@@ -200,7 +212,7 @@
         border:1px solid rgba(0,0,0,0.06);
         box-shadow:0 12px 30px rgba(0,0,0,0.12);
         z-index:999998;
-        font-family:Arial,sans-serif;
+        font-family:Arial;
       }
 
       .fb-wrap {
@@ -231,7 +243,7 @@
     createBottomBar();
 
     if (shouldShowModalOncePerDay()) {
-      setTimeout(createModal, 300);
+      setTimeout(createModal, 250);
     }
   }
 
