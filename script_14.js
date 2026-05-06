@@ -4,7 +4,7 @@
   const STORAGE_DATE = "modal_last_shown_date";
 
   // =========================
-  // CHECK 1 раз в день
+  // CHECK (1 раз в день)
   // =========================
   function shouldShowModalOncePerDay() {
     try {
@@ -57,25 +57,32 @@
 
     document.documentElement.appendChild(overlay);
 
-    requestAnimationFrame(() => overlay.classList.add("show"));
+    // ===== OPEN ANIMATION + BLUR =====
+    requestAnimationFrame(() => {
+      overlay.classList.add("show");
+      document.body.classList.add("blur-on");
+    });
 
     overlay.querySelector("#rmGo").onclick = () => {
       location.href = "https://brimtspo.gosuslugi.ru/";
     };
 
     overlay.querySelector("#rmClose").onclick = () => {
+
       const box = overlay.querySelector(".rm-box");
 
       box.style.opacity = "0";
       box.style.transform = "translateY(10px)";
       overlay.style.opacity = "0";
 
+      document.body.classList.remove("blur-on");
+
       setTimeout(() => overlay.remove(), 200);
     };
   }
 
   // =========================
-  // BOTTOM BAR (ВОЗВРАТ ПАРЕНИЯ)
+  // BOTTOM BAR (ОКНО 2)
   // =========================
   function createBottomBar() {
 
@@ -100,7 +107,7 @@
   }
 
   // =========================
-  // STYLES (ВОЗВРАТ FLOAT EFFECT)
+  // STYLES (BLUR ADDED)
   // =========================
   function injectStyles() {
 
@@ -108,11 +115,21 @@
 
     style.innerHTML = `
 
+      /* ===== GLOBAL BLUR EFFECT ===== */
+      body.blur-on {
+        overflow:hidden;
+      }
+
+      body.blur-on *:not(#redirModal):not(#redirModal *) {
+        transition: filter 0.25s ease;
+        filter: blur(2px);
+      }
+
       /* ===== MODAL ===== */
       #redirModal {
         position:fixed;
         inset:0;
-        background:rgba(0,0,0,0.55);
+        background:rgba(0,0,0,0.45);
         display:flex;
         align-items:center;
         justify-content:center;
@@ -185,7 +202,7 @@
         transform: translateY(-2px) scale(1.04);
       }
 
-      /* ===== BOTTOM BAR (ВОТ ТУТ ВОЗВРАЩАЕМ ПАРЕНИЕ) ===== */
+      /* ===== BOTTOM BAR ===== */
       #floatingBar {
         position:fixed;
         bottom:20px;
@@ -224,7 +241,6 @@
         box-shadow:0 10px 18px rgba(16,185,129,0.25);
       }
 
-      /* 🔥 ПАРЕНИЕ */
       @keyframes floatY {
         0%   { transform: translateX(-50%) translateY(0px); }
         50%  { transform: translateX(-50%) translateY(-6px); }
