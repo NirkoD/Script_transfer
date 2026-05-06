@@ -4,7 +4,7 @@
   const STORAGE_DATE = "modal_last_shown_date";
 
   // =========================
-  // CHECK (1 раз в день)
+  // CHECK 1 раз в день
   // =========================
   function shouldShowModalOncePerDay() {
     try {
@@ -42,7 +42,7 @@
         <div class="rm-content">
           Информация на сайте перестала обновляться <b>31 марта 2026 года</b>.<br><br>
 
-          Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт и недоступен.<br><br>
+          Сайт продолжает работу до <b>10 октября 2026 года</b>, после чего будет закрыт.<br><br>
 
           Вся информация перенесена на официальный сайт техникума.
         </div>
@@ -57,18 +57,13 @@
 
     document.documentElement.appendChild(overlay);
 
-    requestAnimationFrame(() => {
-      overlay.classList.add("show");
-    });
+    requestAnimationFrame(() => overlay.classList.add("show"));
 
-    const go = overlay.querySelector("#rmGo");
-    const close = overlay.querySelector("#rmClose");
-
-    go.onclick = () => {
+    overlay.querySelector("#rmGo").onclick = () => {
       location.href = "https://brimtspo.gosuslugi.ru/";
     };
 
-    close.onclick = () => {
+    overlay.querySelector("#rmClose").onclick = () => {
       const box = overlay.querySelector(".rm-box");
 
       box.style.opacity = "0";
@@ -80,7 +75,7 @@
   }
 
   // =========================
-  // BOTTOM BAR (ОКНО 2)
+  // BOTTOM BAR (ВОЗВРАТ ПАРЕНИЯ)
   // =========================
   function createBottomBar() {
 
@@ -101,15 +96,11 @@
 
     document.documentElement.appendChild(bar);
 
-    const btn = bar.querySelector("#fbBtn");
-
-    btn.onclick = () => {
-      createModal();
-    };
+    bar.querySelector("#fbBtn").onclick = createModal;
   }
 
   // =========================
-  // STYLES (ВОССТАНОВЛЕННЫЙ UI + HOVER FIX)
+  // STYLES (ВОЗВРАТ FLOAT EFFECT)
   // =========================
   function injectStyles() {
 
@@ -126,7 +117,7 @@
         align-items:center;
         justify-content:center;
         z-index:999999;
-        font-family:Segoe UI, Arial, sans-serif;
+        font-family:Segoe UI, Arial;
 
         opacity:0;
         transition:opacity 0.22s ease;
@@ -144,7 +135,7 @@
         width:92%;
         text-align:center;
         box-shadow:0 20px 50px rgba(0,0,0,0.25);
-        transition: transform 0.2s ease, opacity 0.2s ease;
+        transition: all 0.2s ease;
       }
 
       .rm-logoWrap {
@@ -157,13 +148,6 @@
         width:110px;
         height:110px;
         object-fit:contain;
-        background:transparent;
-      }
-
-      h2 {
-        margin:0 0 10px;
-        font-size:22px;
-        color:#111;
       }
 
       .rm-content {
@@ -191,21 +175,17 @@
 
       #rmGo {
         background:linear-gradient(135deg,#34d399,#10b981);
-        box-shadow:0 8px 18px rgba(16,185,129,0.25);
       }
 
       #rmClose {
         background:linear-gradient(135deg,#60a5fa,#3b82f6);
-        box-shadow:0 8px 18px rgba(59,130,246,0.25);
       }
 
-      /* ✔ ВОССТАНОВЛЕН HOVER */
-      #rmGo:hover,
-      #rmClose:hover {
+      #rmGo:hover, #rmClose:hover {
         transform: translateY(-2px) scale(1.04);
       }
 
-      /* ===== BOTTOM BAR ===== */
+      /* ===== BOTTOM BAR (ВОТ ТУТ ВОЗВРАЩАЕМ ПАРЕНИЕ) ===== */
       #floatingBar {
         position:fixed;
         bottom:20px;
@@ -218,6 +198,8 @@
         box-shadow:0 12px 30px rgba(0,0,0,0.12);
         z-index:999998;
         font-family:Arial,sans-serif;
+
+        animation: floatY 4s ease-in-out infinite;
       }
 
       .fb-wrap {
@@ -227,7 +209,6 @@
         align-items:center;
       }
 
-      /* ✔ ВОССТАНОВЛЕН BUTTON HOVER */
       #fbBtn {
         border:none;
         padding:10px 14px;
@@ -241,6 +222,13 @@
       #fbBtn:hover {
         transform: translateY(-2px) scale(1.05);
         box-shadow:0 10px 18px rgba(16,185,129,0.25);
+      }
+
+      /* 🔥 ПАРЕНИЕ */
+      @keyframes floatY {
+        0%   { transform: translateX(-50%) translateY(0px); }
+        50%  { transform: translateX(-50%) translateY(-6px); }
+        100% { transform: translateX(-50%) translateY(0px); }
       }
 
     `;
